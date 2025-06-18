@@ -396,7 +396,7 @@ diesel::table! {
     local_image (pictrs_alias) {
         pictrs_alias -> Text,
         published_at -> Timestamptz,
-        person_id -> Int4,
+        person_id -> Nullable<Int4>,
         thumbnail_for_post_id -> Nullable<Int4>,
     }
 }
