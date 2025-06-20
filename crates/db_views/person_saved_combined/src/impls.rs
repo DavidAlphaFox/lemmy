@@ -26,6 +26,7 @@ use lemmy_db_schema::{
     queries::{
       community_join,
       creator_community_actions_join,
+      creator_community_instance_actions_join,
       creator_home_instance_actions_join,
       creator_local_instance_actions_join,
       creator_local_user_admin_join,
@@ -143,6 +144,7 @@ impl PersonSavedCombinedViewInternal {
       .left_join(my_instance_communities_actions_join)
       .left_join(my_instance_persons_actions_join_1)
       .left_join(creator_home_instance_actions_join())
+      .left_join(creator_community_instance_actions_join())
       .left_join(creator_local_instance_actions_join)
       .left_join(my_post_actions_join)
       .left_join(my_person_actions_join)
@@ -223,13 +225,12 @@ impl InternalToCombinedView for PersonSavedCombinedViewInternal {
         person_actions: v.person_actions,
         instance_communities_actions: v.instance_communities_actions,
         instance_persons_actions: v.instance_persons_actions,
-        creator_home_instance_actions: v.creator_home_instance_actions,
-        creator_local_instance_actions: v.creator_local_instance_actions,
-        creator_community_actions: v.creator_community_actions,
         creator_is_admin: v.item_creator_is_admin,
         post_tags: v.post_tags,
         can_mod: v.can_mod,
         creator_banned: v.creator_banned,
+        creator_is_moderator: v.creator_is_moderator,
+        creator_banned_from_community: v.creator_banned_from_community,
       }))
     } else {
       Some(PersonSavedCombinedView::Post(PostView {
@@ -242,13 +243,12 @@ impl InternalToCombinedView for PersonSavedCombinedViewInternal {
         person_actions: v.person_actions,
         instance_communities_actions: v.instance_communities_actions,
         instance_persons_actions: v.instance_persons_actions,
-        creator_home_instance_actions: v.creator_home_instance_actions,
-        creator_local_instance_actions: v.creator_local_instance_actions,
-        creator_community_actions: v.creator_community_actions,
         creator_is_admin: v.item_creator_is_admin,
         tags: v.post_tags,
         can_mod: v.can_mod,
         creator_banned: v.creator_banned,
+        creator_is_moderator: v.creator_is_moderator,
+        creator_banned_from_community: v.creator_banned_from_community,
       }))
     }
   }
@@ -295,7 +295,7 @@ mod tests {
     let timmy_view = LocalUserView {
       local_user: timmy_local_user,
       person: timmy.clone(),
-      instance_actions: None,
+      banned: false,
     };
 
     let sara_form = PersonInsertForm::test_form(instance.id, "sara_pcv");
