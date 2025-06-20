@@ -10,9 +10,6 @@ use crate::{
     person2,
   },
   newtypes::{InstanceId, PersonId},
-  CreatorCommunityActionsAllColumnsTuple,
-  CreatorHomeInstanceActionsAllColumnsTuple,
-  CreatorLocalInstanceActionsAllColumnsTuple,
   MyInstancePersonsActionsAllColumnsTuple,
   Person1AliasAllColumnsTuple,
   Person2AliasAllColumnsTuple,
@@ -20,7 +17,7 @@ use crate::{
 use diesel::{
   dsl::{case_when, exists, not},
   expression::SqlLiteral,
-  helper_types::{Eq, NotEq},
+  helper_types::{Eq, NotEq, Nullable},
   sql_types::Json,
   BoolExpressionMethods,
   ExpressionMethods,
@@ -276,6 +273,13 @@ pub fn person1_select() -> Person1AliasAllColumnsTuple {
 /// The select for the person2 alias.
 pub fn person2_select() -> Person2AliasAllColumnsTuple {
   person2.fields(person::all_columns)
+}
+
+/// The select for the my_instance_persons_actions alias.
+pub fn my_instance_persons_actions_select() -> Nullable<MyInstancePersonsActionsAllColumnsTuple> {
+  my_instance_persons_actions
+    .fields(instance_actions::all_columns)
+    .nullable()
 }
 
 type IsSubscribedType =
